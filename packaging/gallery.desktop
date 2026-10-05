@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Gallery
+Comment=Tag, organise and search your photos and videos
+Exec=/path/to/Gallery/Gallery
+Terminal=false
+Categories=Graphics;Viewer;

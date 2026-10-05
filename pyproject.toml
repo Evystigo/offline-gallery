@@ -1,0 +1,30 @@
+[project]
+name = "gallery"
+version = "0.1.0"
+description = "Offline photo and video gallery with tags and albums"
+requires-python = ">=3.12"
+dependencies = [
+    "PySide6-Essentials>=6.8",
+    "PySide6-Addons>=6.8",  # QtMultimedia (video playback)
+    "Pillow>=11",
+    "pillow-heif>=0.20",
+    "send2trash>=1.8",  # duplicate removal goes to the Recycle Bin / Trash, never a hard delete
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+build = ["pyinstaller>=6"]
+
+[project.scripts]
+gallery = "gallery.main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

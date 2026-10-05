@@ -1,0 +1,16 @@
+# Environments and build output
+.venv/
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local data: the app keeps its database, thumbnails and log in the OS app-data folder,
+# but never commit anything that looks like it by accident.
+*.db
+*.db-wal
+*.db-shm
+gallery.log
+gallery-sync.*.json

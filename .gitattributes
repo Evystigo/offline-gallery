@@ -1,0 +1,5 @@
+* text=auto
+# Shell scripts and desktop entries must keep LF line endings or they fail on Linux ("bash\r: not found").
+*.sh text eol=lf
+*.desktop text eol=lf
+*.ps1 text eol=crlf
