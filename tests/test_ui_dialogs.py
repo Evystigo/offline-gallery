@@ -35,7 +35,7 @@ def lib(tmp_path, conn):
 
 
 def item(panel, path):
-    return next(panel.list.item(i) for i in range(panel.list.count()) if panel.list.item(i).data(0x100) == path)
+    return next(i for i in panel._all_items() if i.data(0, 0x100) == path)
 
 
 def test_dropping_an_album_requests_a_move(app, conn, lib):
@@ -46,8 +46,8 @@ def test_dropping_an_album_requests_a_move(app, conn, lib):
     panel.album_move_requested.connect(lambda src, dst: got.append((src, dst)))
     a, b = item(panel, "A"), item(panel, "B")
     panel.list.emit_drop(b, [a])
-    panel.list.emit_drop(panel.list.item(0), [a])  # "All media" row = top level
-    assert got == [(a.data(0x101), b.data(0x101)), (a.data(0x101), None)]
+    panel.list.emit_drop(panel.list.topLevelItem(0), [a])  # "All media" row = top level
+    assert got == [(a.data(0, 0x101), b.data(0, 0x101)), (a.data(0, 0x101), None)]
 
 
 def test_pointless_drops_are_ignored(app, conn, lib):
@@ -59,9 +59,53 @@ def test_pointless_drops_are_ignored(app, conn, lib):
     panel.list.emit_drop(a, [a])  # onto itself
     panel.list.emit_drop(None, [a])  # onto empty space
     panel.list.emit_drop(a, [])  # nothing dragged
-    panel.list.emit_drop(a, [panel.list.item(0)])  # the "All media" row is not an album
+    panel.list.emit_drop(a, [panel.list.topLevelItem(0)])  # the "All media" row is not an album
     assert got == []
-    assert not panel.list.item(0).flags() & panel.list.item(0).flags().ItemIsDragEnabled
+    assert not panel.list.topLevelItem(0).flags() & panel.list.topLevelItem(0).flags().ItemIsDragEnabled
+
+
+def test_nested_albums_are_collapsible_and_remember_their_state(app, conn, lib):
+    albums.create_album(conn, lib, "Trips/2024/Summer")
+    albums.create_album(conn, lib, "Work")
+    panel = AlbumPanel(conn, lambda: [str(lib)])
+    trips, y2024 = item(panel, "Trips"), item(panel, "Trips/2024")
+    assert [panel.list.topLevelItem(i).data(0, 0x100) for i in range(panel.list.topLevelItemCount())] == [None, "Trips", "Work"]
+    assert y2024.parent() is trips and item(panel, "Trips/2024/Summer").parent() is y2024
+    assert not trips.isExpanded()  # collapsed by default
+
+    trips.setExpanded(True)
+    panel.reload()
+    assert item(panel, "Trips").isExpanded() and not item(panel, "Trips/2024").isExpanded()
+    assert AlbumPanel(conn, lambda: [str(lib)])._all_items()[1].isExpanded()  # survives a restart
+
+    item(panel, "Trips").setExpanded(False)
+    assert not AlbumPanel(conn, lambda: [str(lib)])._all_items()[1].isExpanded()
+
+
+def test_selecting_a_hidden_album_expands_its_parents(app, conn, lib):
+    albums.create_album(conn, lib, "Trips/2024")
+    panel = AlbumPanel(conn, lambda: [str(lib)])
+    got = []
+    panel.album_selected.connect(got.append)
+    panel.reload(select="Trips/2024")
+    assert item(panel, "Trips").isExpanded() and panel.current_path() == "Trips/2024"
+    assert got == ["Trips/2024"]
+
+
+def test_collapsing_moves_a_hidden_selection_to_the_collapsed_album(app, conn, lib):
+    albums.create_album(conn, lib, "Trips/2024/Summer")
+    panel = AlbumPanel(conn, lambda: [str(lib)])
+    panel.reload(select="Trips/2024/Summer")
+    got = []
+    panel.album_selected.connect(got.append)
+    item(panel, "Trips").setExpanded(False)
+    assert panel.current_path() == "Trips" and got == ["Trips"]
+
+    panel.expand_all()
+    assert all(i.isExpanded() for i in panel._all_items() if i.childCount())
+    panel.list.setCurrentItem(item(panel, "Trips/2024/Summer"))
+    panel.expand_all(False)
+    assert not any(i.isExpanded() for i in panel._all_items()) and panel.current_path() == "Trips"
 
 
 def ids(conn):

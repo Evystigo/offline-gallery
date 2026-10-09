@@ -24,6 +24,8 @@ and video duplicate detection. Without it everything else still works and videos
 - **Albums**: right-click → *Move to album*. This **moves the file** into that folder. Names that already
   exist in the destination are never overwritten. **Drag an album onto another album** (or use *Move…*) to put
   it inside; drop it on *All media* to move it back to the top level.
+  Albums with subfolders can be collapsed with the arrow (or ←/→); right-click the list for *Expand all* /
+  *Collapse all*. Each machine remembers which albums you left open.
 - **Rename** (F2): select any number of files, choose a name, and they become `name1.jpg`, `name2.png`, … in the
   order shown in the grid (each keeps its own extension and stays in its album). The preview shows every new
   name first, and the whole batch is refused if anything would collide. Other machines follow renames at their
