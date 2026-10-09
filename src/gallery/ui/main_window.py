@@ -144,7 +144,7 @@ class MainWindow(QMainWindow):
         self.search_box.selectAll()
 
     def _first_run(self):
-        self.statusBar().showMessage("Welcome! Add a photo folder to get started.")
+        self.statusBar().showMessage("Choose your photo folder to open the library (toolbar: Add folder…).")
         self.add_folder()
 
     # -- window layout ----------------------------------------------------

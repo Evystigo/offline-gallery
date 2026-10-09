@@ -95,7 +95,7 @@ def main(argv: list[str] | None = None) -> int:
 
     from PySide6.QtWidgets import QApplication
 
-    from . import db
+    from . import db, library
     from .ui.main_window import MainWindow
 
     log = _setup_logging()
@@ -105,6 +105,7 @@ def main(argv: list[str] | None = None) -> int:
     app.setApplicationVersion(__version__)
     db_path = db.app_data_dir() / "gallery.db"
     conn = db.connect(db_path)
+    library.forget_roots(conn)  # the media folder is chosen again every time the app opens
     window = MainWindow(conn, db_path)
     window.show()
     log.info("Gallery %s started", __version__)

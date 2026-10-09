@@ -64,3 +64,10 @@ def remove_root(conn: sqlite3.Connection, path: str | Path) -> None:
     with conn:
         conn.execute("UPDATE media SET present = 0 WHERE root = ?", (root,))
         conn.execute("UPDATE folders SET present = 0 WHERE root = ?", (root,))
+
+
+def forget_roots(conn: sqlite3.Connection) -> None:
+    """Called at every launch: the library folder must be chosen again each time the app opens.
+    Tags and albums are kept, so choosing the same folder brings everything back."""
+    for root in get_roots(conn):
+        remove_root(conn, root)

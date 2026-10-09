@@ -80,6 +80,21 @@ def test_remove_root_hides_items_but_keeps_tags_and_files(conn, tmp_path):
     assert [a.path for a in albums.list_albums(conn)] == ["A"]
 
 
+def test_forget_roots_clears_every_folder_but_keeps_tags(conn, tmp_path):
+    folders = [tmp_path / "P", tmp_path / "Q"]
+    for f in folders:
+        f.mkdir()
+        (f / "a.jpg").write_bytes(f.name.encode())
+        scanner.scan_root(conn, library.add_root(conn, f))
+    mid = conn.execute("SELECT id FROM media ORDER BY root").fetchone()["id"]
+    tags.add_tags(conn, [mid], ["keep"])
+    library.forget_roots(conn)
+    assert library.get_roots(conn) == []
+    assert conn.execute("SELECT COUNT(*) FROM media WHERE present = 1").fetchone()[0] == 0
+    scanner.scan_root(conn, library.add_root(conn, folders[0]))
+    assert tags.tags_for(conn, mid) == ["keep"]
+
+
 def test_app_never_imports_network_modules():
     """Privacy guarantee: nothing in the app can talk to the network."""
     banned = {"socket", "ssl", "urllib", "http", "requests", "httpx", "aiohttp", "ftplib", "smtplib", "xmlrpc", "websocket"}

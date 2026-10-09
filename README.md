@@ -19,7 +19,8 @@ and video duplicate detection. Without it everything else still works and videos
 ## Using it
 
 - **Add folder** (Ctrl+O): your library. Subfolders are albums. Files directly in the library folder that
-  have no tags are shown under **Unsorted**.
+  have no tags are shown under **Unsorted**. The app asks for the folder **every time it opens** and does not
+  remember it between launches; choosing the same folder again brings back all its tags and albums.
 - **Tags**: select items, type tags (comma separated) in the right panel (Ctrl+T).
 - **Albums**: right-click → *Move to album*. This **moves the file** into that folder. Names that already
   exist in the destination are never overwritten. **Drag an album onto another album** (or use *Move…*) to put
