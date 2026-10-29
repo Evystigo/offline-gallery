@@ -7,6 +7,13 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
+# Android / Gradle local state
+.gradle/
+.kotlin/
+local.properties
+.idea/
+*.iml
+
 # Local data: the app keeps its database, thumbnails and log in the OS app-data folder,
 # but never commit anything that looks like it by accident.
 *.db

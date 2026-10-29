@@ -4,6 +4,36 @@ A private, offline photo and video gallery for Windows and Linux. Tag files, org
 albums (real folders), search by tag, find duplicates, and keep your tags consistent across machines.
 It never connects to the internet.
 
+An early native Android app is under [`android/`](./android/). Its first milestone asks you to
+select one library folder, remembers access to it, and browses supported photos and videos in that
+folder and its subfolders. Album views include media throughout their nested subfolders, and the
+image preview can step through all matching photos in the current view. Android currently has
+folder selection, browsing, filename and `#tag`
+filtering, quoted phrases/tags, album and date-range searches, image viewing, video handoff to an
+installed player, folder-based album navigation, local tags stored separately for each selected
+library, and moves into existing album folders when the selected storage provider supports it. It
+can create album folders when write access and provider support are available. Choose **Select photos**
+on a folder, or select photos in the current folder, to tag all photos in those folders and their
+subfolders at once; videos are not included. Tags can be renamed, merged, or removed from the selected
+library. Selected files can be batch-renamed with a shared prefix while keeping their extensions and
+folders. It can find exact
+duplicates by SHA-256 and visually similar photos and videos using perceptual hashes and video
+duration, and show their paths; it does not delete files.
+
+Android also supports a persistent dark-mode toggle; its initial setting follows the device theme.
+
+Android can sync tags and album moves with the desktop app using the shared `gallery-sync` JSON
+format. Choose a writable sync folder exposed by a cloud storage provider (for example, a folder
+shared by your sync service), then use **Sync now** on each device. Sync exchanges tag metadata and
+relative file paths only; it does not upload photo or video content. Applying incoming album moves
+can be turned off.
+
+Android search accepts the desktop query syntax: `#beach`, `#sun|sea`, `-#nsfw`,
+`#"new york"`, `type:video`, `album:Trips/2024`, `after:2024-01-01`, and `before:2024-12-31`.
+
+To build it, open the `android` directory in Android Studio with JDK 17 and Android SDK Platform 35
+installed, or use Gradle 8.9+ with `gradle :app:assembleDebug` from that directory.
+
 ## Run from source
 
 ```
